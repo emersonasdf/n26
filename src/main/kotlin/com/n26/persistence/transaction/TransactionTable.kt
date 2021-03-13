@@ -14,7 +14,7 @@ class TransactionTable: TransactionRepositoryGateway {
     private val data = TreeMap<Long, List<Transaction>>()
 
     override fun create(transaction: Transaction) {
-        val epoch = transaction.timestamp.toEpochSecond(zone)
+        val epoch = transaction.timestamp.toEpochMillis()
 
         val currentIndexData = data[epoch] as? ArrayList<Transaction>
         if (currentIndexData == null) {
@@ -26,12 +26,16 @@ class TransactionTable: TransactionRepositoryGateway {
 
     override fun getBetween(from: LocalDateTime, to: LocalDateTime): List<Transaction> {
         return data
-            .tailMap(from.toEpochSecond(zone))
-            .headMap(to.toEpochSecond(zone))
+            .tailMap(from.toEpochMillis())
+            .headMap(to.toEpochMillis())
             .flatMap { it.value }
     }
 
     override fun reset() {
         data.clear()
+    }
+
+    private fun LocalDateTime.toEpochMillis(): Long {
+        return this.toInstant(zone).toEpochMilli();
     }
 }
