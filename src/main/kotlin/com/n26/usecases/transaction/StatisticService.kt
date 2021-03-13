@@ -24,10 +24,10 @@ class StatisticService(
         val data = repository.getBetween(oneMinuteAgo, now)
         if (data.isEmpty()) {
             return Statistics(
-                sum = null,
-                avg = null,
-                max = null,
-                min = null,
+                sum = BigDecimal.ZERO,
+                avg = BigDecimal.ZERO,
+                max = BigDecimal.ZERO,
+                min = BigDecimal.ZERO,
                 count = 0,
             )
         }
@@ -43,7 +43,7 @@ class StatisticService(
             max = if (it.amount > max) it.amount else max
         }
 
-        val avg = if (count > 0) sum.divide(BigDecimal(count), 2, RoundingMode.HALF_UP) else null
+        val avg = if (count > 0) sum.divide(BigDecimal(count), 2, RoundingMode.HALF_UP) else BigDecimal.ZERO
 
         return Statistics(
             sum = sum,
