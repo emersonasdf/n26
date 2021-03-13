@@ -6,7 +6,6 @@ import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.util.TreeMap
-import java.util.stream.Stream
 
 @Repository
 class TransactionTable: TransactionRepositoryGateway {
@@ -30,5 +29,9 @@ class TransactionTable: TransactionRepositoryGateway {
             .tailMap(from.toEpochSecond(zone))
             .headMap(to.toEpochSecond(zone))
             .flatMap { it.value }
+    }
+
+    override fun reset() {
+        data.clear()
     }
 }

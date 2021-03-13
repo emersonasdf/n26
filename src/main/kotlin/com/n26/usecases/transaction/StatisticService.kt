@@ -1,20 +1,25 @@
 package com.n26.usecases.transaction
 
 import com.n26.entities.transaction.Statistics
+import com.n26.usecases.transaction.gateways.TimeProviderGateway
 import com.n26.usecases.transaction.gateways.TransactionRepositoryGateway
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
-import java.time.LocalDateTime
-import java.time.ZoneOffset
+import java.math.RoundingMode
 
 @Service
 class StatisticService(
-    private val repository: TransactionRepositoryGateway
+    private val repository: TransactionRepositoryGateway,
+    private val timeProvider: TimeProviderGateway
 ) {
 
+    @Value("\${transaction.expire.time.in.seconds}")
+    lateinit var expireTimeInSeconds: String
+
     fun get(): Statistics {
-        val now = LocalDateTime.now()
-        val oneMinuteAgo = now.minusDays(1)
+        val now = timeProvider.now()
+        val oneMinuteAgo = now.minusSeconds(getExpireTime())
 
         val data = repository.getBetween(oneMinuteAgo, now)
         if (data.isEmpty()) {
@@ -38,7 +43,7 @@ class StatisticService(
             max = if (it.amount > max) it.amount else max
         }
 
-        val avg = if (count > 0) sum.divide(BigDecimal(count)) else null
+        val avg = if (count > 0) sum.divide(BigDecimal(count), 2, RoundingMode.HALF_UP) else null
 
         return Statistics(
             sum = sum,
@@ -47,5 +52,10 @@ class StatisticService(
             min = min,
             count = count,
         )
+    }
+
+//    FIXME: TODO: DRY here
+    private fun getExpireTime(): Long {
+        return expireTimeInSeconds.toLong()
     }
 }

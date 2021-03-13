@@ -8,4 +8,6 @@ interface TransactionRepositoryGateway {
     fun create(transaction: Transaction)
 
     fun getBetween(from: LocalDateTime, to: LocalDateTime): List<Transaction>
+
+    fun reset()
 }

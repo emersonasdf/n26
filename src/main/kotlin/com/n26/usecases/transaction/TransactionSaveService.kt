@@ -3,15 +3,16 @@ package com.n26.usecases.transaction
 import com.n26.entities.transaction.Transaction
 import com.n26.usecases.transaction.exceptions.TransactionHasFutureDateException
 import com.n26.usecases.transaction.exceptions.TransactionIsTooOldToSaveException
+import com.n26.usecases.transaction.gateways.TimeProviderGateway
 import com.n26.usecases.transaction.gateways.TransactionRepositoryGateway
 import com.n26.usecases.transaction.models.TransactionCreationModel
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
-import java.time.LocalDateTime
 
 @Service
 class TransactionSaveService(
-    private val repository: TransactionRepositoryGateway
+    private val repository: TransactionRepositoryGateway,
+    private val timeProvider: TimeProviderGateway
 ) {
 
     @Value("\${transaction.expire.time.in.seconds}")
@@ -19,7 +20,7 @@ class TransactionSaveService(
 
 
     fun add(transactionModel: TransactionCreationModel) {
-        val now = LocalDateTime.now()
+        val now = timeProvider.now()
         if (now.minusSeconds(getExpireTime()) > transactionModel.timestamp)
             throw TransactionIsTooOldToSaveException("Transaction is too old to save")
         else if (transactionModel.timestamp > now) {
