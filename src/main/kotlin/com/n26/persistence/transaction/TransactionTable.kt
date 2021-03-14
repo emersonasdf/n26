@@ -26,6 +26,11 @@ class TransactionTable: TransactionRepositoryGateway {
     }
 
     @Synchronized
+    fun getAll(): List<Transaction> {
+        return data.flatMap { it.value }
+    }
+
+    @Synchronized
     override fun getBetween(from: LocalDateTime, to: LocalDateTime): List<Transaction> {
         return data
             .tailMap(from.toEpochMillis())
