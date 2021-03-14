@@ -8,5 +8,5 @@ import java.time.ZoneOffset
 @Service
 class LocalDateTimeProvider: TimeProviderGateway {
 
-    override fun now() = LocalDateTime.now(ZoneOffset.UTC)
+    override fun now(): LocalDateTime = LocalDateTime.now(ZoneOffset.UTC)
 }

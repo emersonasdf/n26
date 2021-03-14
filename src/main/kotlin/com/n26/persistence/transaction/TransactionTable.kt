@@ -48,6 +48,6 @@ class TransactionTable: TransactionRepositoryGateway {
     }
 
     private fun LocalDateTime.toEpochMillis(): Long {
-        return this.toInstant(zone).toEpochMilli();
+        return this.toInstant(zone).toEpochMilli()
     }
 }
