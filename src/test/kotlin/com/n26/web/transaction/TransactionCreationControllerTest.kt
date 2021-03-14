@@ -93,9 +93,9 @@ class TransactionCreationControllerTest {
 
     private fun asJsonString(obj: Any): String {
         try {
-            return ObjectMapper().writeValueAsString(obj);
+            return ObjectMapper().writeValueAsString(obj)
         } catch (e: Exception) {
-            throw RuntimeException (e);
+            throw RuntimeException (e)
         }
     }
 }
