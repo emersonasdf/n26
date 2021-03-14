@@ -12,14 +12,12 @@ class StatisticController(
     private val service: StatisticService
 ) {
 
+    private val formatter = DecimalFormat("0.00")
+
     @GetMapping("/statistics")
     @ResponseStatus(HttpStatus.OK)
     fun get(): StatisticsResponse {
         val response =  service.get()
-        //    TODO: fix this ugly decimal formatter
-        val formatter = DecimalFormat("0.00")
-
-
         return StatisticsResponse(
             sum = formatter.format(response.sum),
             avg = formatter.format(response.avg),
@@ -28,8 +26,6 @@ class StatisticController(
             count = response.count,
         )
     }
-
-
 
     data class StatisticsResponse(
         val sum: String?,
