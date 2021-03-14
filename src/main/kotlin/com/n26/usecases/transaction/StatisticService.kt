@@ -17,6 +17,9 @@ class StatisticService(
     @Value("\${transaction.expire.time.in.seconds}")
     lateinit var expireTimeInSeconds: String
 
+    private val decimalRoundStrategy = RoundingMode.HALF_UP
+    private val decimalScale = 2
+
     fun get(): Statistics {
         val now = timeProvider.now()
         val nonExpiredTime = now.minusSeconds(getExpireTime())
@@ -43,19 +46,19 @@ class StatisticService(
             max = if (it.amount > max) it.amount else max
         }
 
-        val avg = if (count > 0) sum.divide(BigDecimal(count), 2, RoundingMode.HALF_UP) else BigDecimal.ZERO
+        val avg = sum.divide(BigDecimal(count), decimalScale, decimalRoundStrategy)
 
         return Statistics(
-            sum = sum,
-            avg = avg,
-            max = max,
-            min = min,
+            sum = sum.normalize(),
+            avg = avg.normalize(),
+            max = max.normalize(),
+            min = min.normalize(),
             count = count,
         )
     }
 
+    private fun BigDecimal.normalize(): BigDecimal = this.setScale(decimalScale, decimalRoundStrategy)
+
 //    FIXME: TODO: DRY here
-    private fun getExpireTime(): Long {
-        return expireTimeInSeconds.toLong()
-    }
+    private fun getExpireTime(): Long = expireTimeInSeconds.toLong()
 }
