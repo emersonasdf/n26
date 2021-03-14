@@ -34,6 +34,15 @@ class TransactionTable: TransactionRepositoryGateway {
     }
 
     @Synchronized
+    override fun deleteBefore(time: LocalDateTime) {
+        data
+            .headMap(time.toEpochMillis())
+            .keys
+            .toList()
+            .forEach(data::remove)
+    }
+
+    @Synchronized
     override fun reset() {
         data.clear()
     }

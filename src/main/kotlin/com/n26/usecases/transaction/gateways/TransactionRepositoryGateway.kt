@@ -9,5 +9,7 @@ interface TransactionRepositoryGateway {
 
     fun getBetween(from: LocalDateTime, to: LocalDateTime): List<Transaction>
 
+    fun deleteBefore(time: LocalDateTime)
+
     fun reset()
 }

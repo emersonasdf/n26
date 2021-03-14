@@ -19,9 +19,9 @@ class StatisticService(
 
     fun get(): Statistics {
         val now = timeProvider.now()
-        val oneMinuteAgo = now.minusSeconds(getExpireTime())
+        val nonExpiredTime = now.minusSeconds(getExpireTime())
 
-        val data = repository.getBetween(oneMinuteAgo, now)
+        val data = repository.getBetween(nonExpiredTime, now)
         if (data.isEmpty()) {
             return Statistics(
                 sum = BigDecimal.ZERO,
