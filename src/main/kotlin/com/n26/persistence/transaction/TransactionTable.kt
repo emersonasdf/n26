@@ -13,6 +13,7 @@ class TransactionTable: TransactionRepositoryGateway {
     private val zone = ZoneOffset.UTC
     private val data = TreeMap<Long, List<Transaction>>()
 
+    @Synchronized
     override fun create(transaction: Transaction) {
         val epoch = transaction.timestamp.toEpochMillis()
 
@@ -24,6 +25,7 @@ class TransactionTable: TransactionRepositoryGateway {
         }
     }
 
+    @Synchronized
     override fun getBetween(from: LocalDateTime, to: LocalDateTime): List<Transaction> {
         return data
             .tailMap(from.toEpochMillis())
@@ -31,6 +33,7 @@ class TransactionTable: TransactionRepositoryGateway {
             .flatMap { it.value }
     }
 
+    @Synchronized
     override fun reset() {
         data.clear()
     }
